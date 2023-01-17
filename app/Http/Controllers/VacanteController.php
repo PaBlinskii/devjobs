@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Vacante;
 use Illuminate\Http\Request;
 
 class VacanteController extends Controller
@@ -13,7 +14,8 @@ class VacanteController extends Controller
      */
     public function index()
     {
-        //
+        // como no toma ninguna instancia en este caso colocamos el modelo vacante
+        $this->authorize('viewAny', Vacante::class);
         return view('vacantes.index');
     }
 
@@ -24,19 +26,9 @@ class VacanteController extends Controller
      */
     public function create()
     {
-        //
+        // vamos a impedir que el usuario pueda crear vacantes excepto el reclutador
+        $this->authorize('create', Vacante::class);
         return view('vacantes.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -45,9 +37,12 @@ class VacanteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Vacante $vacante)
     {
         //
+        return view('vacantes.show', [
+            'vacante' => $vacante
+        ]);
     }
 
     /**
@@ -56,31 +51,15 @@ class VacanteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Vacante $vacante)
     {
-        //
+        // Autorizando la edición por medio de Policy
+        $this->authorize('update', $vacante);
+
+        return view('vacantes.edit', [
+            'vacante' => $vacante
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+    // Quitamos mostrar, update y destroy porque livewire ya lo esta manejando
 }
